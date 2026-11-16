@@ -29,7 +29,6 @@ This application helps manage inventory and billing operations through a central
 - SQLite
 
 ## 📂 Project Modules
-
 - Accounts
 - Dashboard
 - Products
@@ -114,3 +113,8 @@ GitHub: [Manipriya05](https://github.com/Manipriya05)
 ---
 
 ⭐ Thank you for visiting my project!
+The local SQLite database is intentionally excluded from Git. Mall categories and sample products are created by the product migrations.
+
+## Project Documentation
+Inventory Billing Management System built using Django and Python.
+d4e39dd (Improve README documentation)
