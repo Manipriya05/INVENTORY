@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Reports | Inventory Billing{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div><h1 class="h3 mb-1">Reports</h1><p class="text-secondary mb-0">Filter sales and purchases by date range.</p></div>
+    <button class="btn btn-outline-primary no-print" type="button" onclick="window.print()">Print report</button>
+</div>
+<form method="get" class="card card-body mb-4 no-print">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-4"><label class="form-label" for="{{ form.report.id_for_label }}">Report type</label>{{ form.report }}{% for error in form.report.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}</div>
+        <div class="col-md-3"><label class="form-label" for="{{ form.start_date.id_for_label }}">From</label>{{ form.start_date }}{% for error in form.start_date.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}</div>
+        <div class="col-md-3"><label class="form-label" for="{{ form.end_date.id_for_label }}">To</label>{{ form.end_date }}{% for error in form.end_date.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}</div>
+        <div class="col-md-2"><button class="btn btn-primary w-100" type="submit">Run report</button></div>
+    </div>
+</form>
+{% if form.errors %}<div class="alert alert-danger">Correct the report filters and try again.</div>{% endif %}
+{% if start_date and end_date %}<p class="text-secondary">Period: {{ start_date|date:"d M Y" }} – {{ end_date|date:"d M Y" }}</p>{% endif %}
+{% if sales_total != None or purchases_total != None %}
+<div class="row g-3 mb-4">
+    <div class="col-sm-6"><div class="card summary-card"><div class="card-body"><div class="text-secondary">Sales total</div><div class="summary-value">₹{{ sales_total|floatformat:2 }}</div></div></div></div>
+    <div class="col-sm-6"><div class="card summary-card"><div class="card-body"><div class="text-secondary">Purchase total</div><div class="summary-value">₹{{ purchases_total|floatformat:2 }}</div></div></div></div>
+</div>
+{% endif %}
+{% if report_type == 'daily_sales' %}
+<div class="card"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Invoice</th><th>Customer</th><th>Date</th><th class="text-end">Total</th></tr></thead><tbody>
+{% for sale in sales %}<tr><td><a href="{% url 'invoice_detail' sale.id %}">{{ sale.invoice_number }}</a></td><td>{% if sale.customer %}{{ sale.customer.name }}{% else %}Walk-in customer{% endif %}</td><td>{{ sale.sale_date|date:"d M Y H:i" }}</td><td class="text-end">₹{{ sale.grand_total|floatformat:2 }}</td></tr>
+{% empty %}<tr><td colspan="4" class="text-center py-4">No sales in this period.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% elif report_type == 'monthly_sales' %}
+<div class="card"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Date</th><th class="text-end">Sales total</th></tr></thead><tbody>
+{% for month in sales_by_month %}<tr><td>{{ month.report_month|date:"F Y" }}</td><td class="text-end">₹{{ month.total|floatformat:2 }}</td></tr>
+{% empty %}<tr><td colspan="2" class="text-center py-4">No sales in this period.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% elif report_type == 'purchases' %}
+<div class="card"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Purchase</th><th>Supplier</th><th>Date</th><th class="text-end">Total</th></tr></thead><tbody>
+{% for purchase in purchases %}<tr><td>#{{ purchase.id }}</td><td>{{ purchase.supplier.name }}</td><td>{{ purchase.purchase_date|date:"d M Y" }}</td><td class="text-end">₹{{ purchase.total_amount|floatformat:2 }}</td></tr>
+{% empty %}<tr><td colspan="4" class="text-center py-4">No purchases in this period.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% elif report_type == 'stock' or report_type == 'low_stock' %}
+<div class="card"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Product</th><th>Code</th><th>Category</th><th class="text-end">Quantity</th><th class="text-end">Minimum</th><th class="text-end">Cost value</th></tr></thead><tbody>
+{% for product in products %}<tr><td>{{ product.name }}</td><td>{{ product.product_code }}</td><td>{{ product.category.name }}</td><td class="text-end">{{ product.quantity }}</td><td class="text-end">{{ product.minimum_stock }}</td><td class="text-end">₹{{ product.stock_value|floatformat:2 }}</td></tr>
+{% empty %}<tr><td colspan="6" class="text-center py-4">No matching products found.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}Delete customer | Inventory Billing{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-7 col-lg-5"><div class="card border-danger"><div class="card-body p-4">
+<h1 class="h4 text-danger">Delete customer?</h1><p>Are you sure you want to delete <strong>{{ customer.name }}</strong>? Sales records will retain their invoice data but will no longer link to this customer.</p>
+<form method="post">{% csrf_token %}<button class="btn btn-danger" type="submit">Yes, delete</button> <a class="btn btn-outline-secondary" href="{% url 'customer_list' %}">Cancel</a></form>
+</div></div></div></div>
+{% endblock %}

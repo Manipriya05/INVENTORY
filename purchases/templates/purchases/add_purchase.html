@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Add purchase | Inventory Billing{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-xl-9">
+    <div class="d-flex justify-content-between align-items-center mb-3"><h1 class="h3 mb-0">Add purchase</h1><a class="btn btn-outline-secondary" href="{% url 'purchase_list' %}">Back to purchases</a></div>
+    <form method="post" class="card"><div class="card-body p-4">
+        {% csrf_token %}
+        {% if purchase_form.non_field_errors %}<div class="alert alert-danger">{{ purchase_form.non_field_errors }}</div>{% endif %}
+        {% for field in purchase_form %}<div class="mb-3"><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}</div>{% endfor %}
+        <h2 class="h5 mt-4">Products</h2>
+        {{ item_formset.management_form }}
+        {% if item_formset.non_form_errors %}<div class="alert alert-danger">{{ item_formset.non_form_errors }}</div>{% endif %}
+        <div id="purchase-items">
+        {% for form in item_formset %}<div class="border rounded p-3 mb-3 purchase-item">
+            {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+            <div class="row g-3">{% for field in form %}{% if field.is_hidden %}{{ field }}{% else %}<div class="col-md-4"><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}</div>{% endif %}{% endfor %}</div>
+        </div>{% endfor %}
+        </div>
+        <template id="purchase-item-template">
+            <div class="border rounded p-3 mb-3 purchase-item">
+                <div class="row g-3">{% for field in item_formset.empty_form %}{% if field.is_hidden %}{{ field }}{% else %}<div class="col-md-4"><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}</div>{% endif %}{% endfor %}</div>
+            </div>
+        </template>
+        <button class="btn btn-outline-primary mb-3" type="button" id="add-purchase-item">Add another product</button>
+        <button class="btn btn-primary" type="submit">Save purchase</button>
+        <a class="btn btn-outline-secondary" href="{% url 'purchase_list' %}">Cancel</a>
+    </div></form>
+</div></div>
+{% endblock %}
+{% block scripts %}
+<script>
+    document.getElementById('add-purchase-item').addEventListener('click', function () {
+        const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+        const index = Number(totalForms.value);
+        const template = document.getElementById('purchase-item-template').innerHTML;
+        document.getElementById('purchase-items').insertAdjacentHTML(
+            'beforeend',
+            template.replace(/__prefix__/g, index)
+        );
+        totalForms.value = index + 1;
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Edit supplier | Inventory Billing{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-7"><h1 class="h3 mb-3">Edit supplier</h1>
+<form method="post" class="card"><div class="card-body p-4">{% csrf_token %}{{ form.as_p }}<button class="btn btn-primary" type="submit">Update supplier</button> <a class="btn btn-outline-secondary" href="{% url 'supplier_list' %}">Cancel</a></div></form>
+</div></div>
+{% endblock %}

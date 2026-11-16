@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | Inventory Billing{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+        <h1 class="h3 mb-1">Dashboard</h1>
+        <p class="text-secondary mb-0">Business overview for {{ today|date:"F j, Y" }}</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'reports' %}">View reports</a>
+</div>
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3"><div class="card summary-card h-100"><div class="card-body"><div class="text-secondary">Products</div><div class="summary-value">{{ total_products }}</div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card summary-card h-100"><div class="card-body"><div class="text-secondary">Low stock</div><div class="summary-value text-danger">{{ low_stock_count }}</div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card summary-card h-100"><div class="card-body"><div class="text-secondary">Sales total</div><div class="summary-value">₹{{ sales_amount|floatformat:2 }}</div><small class="text-secondary">{{ total_sales }} invoices</small></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card summary-card h-100"><div class="card-body"><div class="text-secondary">Purchase total</div><div class="summary-value">₹{{ purchase_amount|floatformat:2 }}</div><small class="text-secondary">{{ total_purchases }} purchases</small></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card summary-card h-100"><div class="card-body"><div class="text-secondary">Inventory value at cost</div><div class="summary-value">₹{{ inventory_value|floatformat:2 }}</div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card summary-card h-100"><div class="card-body"><div class="text-secondary">Customers</div><div class="summary-value">{{ total_customers }}</div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card summary-card h-100"><div class="card-body"><div class="text-secondary">Suppliers</div><div class="summary-value">{{ total_suppliers }}</div></div></div></div>
+</div>
+<div class="row g-4">
+    <section class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center"><h2 class="h5 mb-0">Recent sales</h2><a href="{% url 'sale_list' %}">All sales</a></div>
+            <div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Invoice</th><th>Date</th><th>Total</th></tr></thead><tbody>
+                {% for sale in recent_sales %}<tr><td><a href="{% url 'invoice_detail' sale.id %}">{{ sale.invoice_number }}</a></td><td>{{ sale.sale_date|date:"d M Y" }}</td><td>₹{{ sale.grand_total|floatformat:2 }}</td></tr>
+                {% empty %}<tr><td colspan="3" class="text-center text-secondary py-4">No sales recorded.</td></tr>{% endfor %}
+            </tbody></table></div>
+        </div>
+    </section>
+    <section class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center"><h2 class="h5 mb-0">Recent purchases</h2><a href="{% url 'purchase_list' %}">All purchases</a></div>
+            <div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Purchase</th><th>Supplier</th><th>Total</th></tr></thead><tbody>
+                {% for purchase in recent_purchases %}<tr><td>#{{ purchase.id }}</td><td>{{ purchase.supplier.name }}</td><td>₹{{ purchase.total_amount|floatformat:2 }}</td></tr>
+                {% empty %}<tr><td colspan="3" class="text-center text-secondary py-4">No purchases recorded.</td></tr>{% endfor %}
+            </tbody></table></div>
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Log in | Inventory Billing{% endblock %}
+{% block content %}
+<div class="card auth-card">
+    <div class="card-body p-4 p-md-5">
+        <div class="mb-4 text-center">
+            <div class="brand-badge">IB</div>
+            <h1 class="h3 mb-2">Welcome back</h1>
+            <p class="text-secondary mb-0">Sign in to your inventory management workspace.</p>
+        </div>
+
+        {% if form.errors %}
+            <div class="alert alert-danger">Username or password is incorrect. Check your credentials and try again.</div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            <div class="mb-3">
+                <label class="form-label" for="{{ form.username.id_for_label }}">Username</label>
+                <input class="form-control" type="text" name="{{ form.username.html_name }}" id="{{ form.username.id_for_label }}" autocomplete="username" required autofocus>
+            </div>
+            <div class="mb-4">
+                <label class="form-label" for="{{ form.password.id_for_label }}">Password</label>
+                <input class="form-control" type="password" name="{{ form.password.html_name }}" id="{{ form.password.id_for_label }}" autocomplete="current-password" required>
+            </div>
+            <button class="btn btn-primary" type="submit">Log in</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
