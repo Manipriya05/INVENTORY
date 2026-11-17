@@ -96,6 +96,29 @@ Open your browser:
 
 `http://127.0.0.1:8000/`
 
+## 🚀 Deploy on Render
+
+This is a Django application, so it needs a Python web service and a persistent
+database. The included `render.yaml` configures a Render web service and
+PostgreSQL database.
+
+1. Push the project to GitHub. Do not commit `.env` or `db.sqlite3`.
+2. In Render, choose **New → Blueprint**, connect the GitHub repository, and
+   apply the `render.yaml` blueprint. Render will create the web service and
+   database; the service applies database migrations on startup.
+3. Wait for the first deploy to finish, then open the web service's **Shell**
+   and run `python manage.py createsuperuser` to create your login. Shell access
+   may require a paid instance; if it is unavailable on your plan, temporarily
+   switch to a plan that provides it.
+4. Open the service URL shown by Render.
+
+The local SQLite database is not copied to Render. The deployed PostgreSQL
+database starts with the project's migrations and seeded sample products. If
+you use a custom domain, add it to `DJANGO_ALLOWED_HOSTS` and add its HTTPS
+origin to `DJANGO_CSRF_TRUSTED_ORIGINS` in the Render service's environment.
+The included free plans may have usage or expiration limits; check Render's
+current plan details before relying on them for business data.
+
 ## 🔒 Security
 
 - Local SQLite database is excluded from Git.
